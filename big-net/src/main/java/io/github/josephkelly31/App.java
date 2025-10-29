@@ -29,6 +29,7 @@ public class App {
     }
 
     public static void setUp(String csv_file_path){
+        // Print greeting and check for existing finance.csv file
         System.out.println("Welcome to Big Net - Your Personal Finance Tracker!");
         
         File csv_file = new File(csv_file_path);
@@ -50,11 +51,13 @@ public class App {
     }
 
     public static void printFarewell(){
+        // Print farewell message
         System.out.println("Thank you for using Big Net. Goodbye!");
     }
 
     public static void compressEntry(String file_path, Date date){
-
+        // Compress the file_path file into a gzip file named with the current date
+        
         File fileToCompress = new File(file_path);
         if (!fileToCompress.exists()) {
             System.out.println("File not found: " + file_path);
@@ -70,26 +73,29 @@ public class App {
         String compressedFileName = "finance_" + formattedDate + ".gz";
         File compressedFile = new File(compressedFileName);
         if (compressedFile.exists()) {
+            System.out.println("Compressed file for" + date.toString() +  " already exists: " + compressedFileName);
             App.updateCompressedEntry(date, compressedFileName, fileToCompress);
             return;
         }
         App.compressFile(fileToCompress, compressedFileName);
     }
 
-    public static void updateCompressedEntry(Date date, String compressedFileName, File fileToCompress){
-        System.out.println("Compressed file for" + date.toString() +  " already exists: " + compressedFileName);
+    public static void updateCompressedEntry(Date date, String compressedFileName, File updateFile){
+        // Update existing compressed file with new entries from updateFile, deleting updateFile after use
+
         System.out.println("Appending to existing compressed files is not yet implemented.");
         String decompressed_file_name = "decompressed_" + compressedFileName;
         App.decompressFile(compressedFileName, decompressed_file_name);
         File decompressed_file = new File(decompressed_file_name);
-        App.conjugateFiles(decompressed_file, fileToCompress);
+        App.conjugateFiles(decompressed_file, updateFile);
         App.updateCompressedFile(decompressed_file, compressedFileName);
         decompressed_file.delete();
-        fileToCompress.delete();
+        updateFile.delete();
     }
 
     public static void decompressFile(String compressedFilePath, String decompressedFilePath) {
-        // Decompression logic can be implemented here if needed
+        // Decompress a gzip file to a specified location
+        
         try(
             FileInputStream fis = new FileInputStream(compressedFilePath);
             GZIPInputStream gzis = new GZIPInputStream(fis);
@@ -107,6 +113,8 @@ public class App {
     }
 
     public static void conjugateFiles(File originalFile, File decompressedFile){
+        // Append contents of decompressedFile to originalFile
+
         try(
             FileInputStream fis = new FileInputStream(decompressedFile);
             FileOutputStream fos = new FileOutputStream(originalFile, true)) // Append mode
@@ -123,7 +131,8 @@ public class App {
     }
 
     public static void updateCompressedFile(File fileToCompress, String compressedFileName) {
-        // Logic to update compressed file can be implemented here if needed
+        // Re-compress the updated file, overwriting the existing compressed file
+        
         File currentCompressedFile = new File(compressedFileName);
         if (currentCompressedFile.delete()){
             App.compressFile(fileToCompress, compressedFileName);
@@ -133,6 +142,8 @@ public class App {
     }
 
     public static void compressFile(File fileToCompress, String compressedFileName) {
+        // Compress a file into gzip format
+
         try (
             FileInputStream fis = new FileInputStream(fileToCompress);
             FileOutputStream fos = new FileOutputStream(compressedFileName);
@@ -150,6 +161,7 @@ public class App {
     }
 
     public static void createFinanceCSV(String csv_file_path){
+        // Create or update finance.csv with user input
         
         String[] finance_questions = {
                 "Enter the type of transaction (e.g., 'income', 'expense'): ",
