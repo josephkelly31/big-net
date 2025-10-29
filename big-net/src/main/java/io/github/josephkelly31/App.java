@@ -11,6 +11,12 @@ import java.io.PrintWriter;
 public class App {
     public static void main(String[] args) {
 
+        // Update csv with new finance data
+        App.add_to_finance_csv();
+
+    }
+
+    public static void add_to_finance_csv(){
         String[] finance_questions = {
                 "Enter the type of transaction (e.g., 'income', 'expense'): ",
                 "Enter the amount: ",
@@ -51,8 +57,7 @@ public class App {
             }
         }
 
-        System.out.println("Exiting application.");
+        System.out.println("Exiting Big Net application.");
         scanner.close();
-
     }
 }
