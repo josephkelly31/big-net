@@ -14,7 +14,7 @@ public class App {
         // Print greeting
         App.print_greeting();
         // Update csv with new finance data
-        App.add_to_finance_csv();
+        App.create_finance_csv("finance.csv");
         // Print farewell
         App.print_farewell();
 
@@ -28,7 +28,15 @@ public class App {
         System.out.println("Thank you for using Big Net. Goodbye!");
     }
 
-    public static void add_to_finance_csv(){
+    public static void compress_entry(String file_path){
+        // Placeholder for future implementation
+        // Check if compressed file with today's date exists
+        // If so, decompress and append new entry
+        // Else, create new compressed file with entry
+    }
+
+    public static void create_finance_csv(String csv_file_path){
+        
         String[] finance_questions = {
                 "Enter the type of transaction (e.g., 'income', 'expense'): ",
                 "Enter the amount: ",
@@ -51,7 +59,7 @@ public class App {
 
             System.out.println(String.join(" ", entry));
             if (CSVUtils.isValidEntry(entry)) {
-                try (PrintWriter pw = new PrintWriter(new FileWriter("finance.csv", true))) {
+                try (PrintWriter pw = new PrintWriter(new FileWriter(csv_file_path, true))) {
                     CSVWriter writer = new CSVWriter(pw);
                     writer.writeNext(entry);
                     writer.close();
