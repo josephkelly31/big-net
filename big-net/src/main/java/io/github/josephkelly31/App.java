@@ -15,11 +15,17 @@ public class App {
         App.print_greeting();
         // Update csv with new finance data
         App.add_to_finance_csv();
+        // Print farewell
+        App.print_farewell();
 
     }
 
     public static void print_greeting(){
         System.out.println("Welcome to Big Net - Your Personal Finance Tracker!");
+    }
+
+    public static void print_farewell(){
+        System.out.println("Thank you for using Big Net. Goodbye!");
     }
 
     public static void add_to_finance_csv(){
