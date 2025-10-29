@@ -11,9 +11,15 @@ import java.io.PrintWriter;
 public class App {
     public static void main(String[] args) {
 
+        // Print greeting
+        App.print_greeting();
         // Update csv with new finance data
         App.add_to_finance_csv();
 
+    }
+
+    public static void print_greeting(){
+        System.out.println("Welcome to Big Net - Your Personal Finance Tracker!");
     }
 
     public static void add_to_finance_csv(){
