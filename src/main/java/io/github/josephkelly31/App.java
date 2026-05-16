@@ -7,8 +7,11 @@ import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.util.Arrays;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.stream.Stream;
 
 public class App {
 
@@ -45,7 +48,15 @@ public class App {
         }
 
         App.greeting();
-        App.processTradingCSV(args[0]);
+        Path p = Path.of(args[0]);
+        if (Files.isDirectory(p)) {
+            App.processDirectory(p);
+        } else if (Files.isRegularFile(p)) {
+            App.processFile(Path.of(args[0]));
+        } else {
+            logger.severe("File path provided corresponds to neither a directory or file.");
+        }
+
         App.printFarewell();
     }
 
@@ -55,10 +66,20 @@ public class App {
         logger.info("-----------------------------");
     }
 
-    private static final void processTradingCSV(String csvPath) {
-        logger.info("Processing total of: " + csvPath);
+    private static final void processDirectory(Path p) {
+        try (Stream<Path> entries = Files.list(p)) {
+            entries.forEach(App::processFile);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-        try (BufferedReader file = new BufferedReader(new FileReader(csvPath))) {
+    private static final void processFile(Path p) {
+        logger.info("Processing total of: " + p.toString());
+
+        // Check if directory or single file
+
+        try (BufferedReader file = Files.newBufferedReader(p)) {
 
             String header = file.readLine();
             String[] headers = header.split(",");
@@ -86,7 +107,7 @@ public class App {
         } catch (Exception e) {
             logger.severe(e.getMessage());
         } finally {
-            logger.info("Processed: " + csvPath);
+            logger.info("Processed: " + p.toString());
         }
     }
 
