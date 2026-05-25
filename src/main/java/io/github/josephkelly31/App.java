@@ -7,8 +7,10 @@ import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import java.io.BufferedReader;
+import java.util.logging.Level;
 import java.util.Arrays;
-
+import java.util.HashMap;
+import java.util.Map;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.stream.Stream;
@@ -39,20 +41,38 @@ public class App {
 
     public static void main(String[] args) {
 
-        if (args.length == 0) {
-            logger.severe("No arguments given. CSV path is required");
-            return;
-        } else if (args.length > 1) {
-            logger.severe("Too many arguments given. One is required");
+        App.greeting();
 
+        Map<String, String> kwargs = new HashMap<>();
+        String flagName;
+        boolean debug = false;
+        for (int i = 0; i < args.length - 1; i++) {
+            if (args[i].startsWith("--")) {
+                flagName = args[i].substring(2);
+                if (flagName.equals("debug")) {
+                    debug = true;
+                } else {
+                    kwargs.put(flagName, args[i + 1]);
+                }
+            }
         }
 
-        App.greeting();
-        Path p = Path.of(args[0]);
+        if (debug) {
+            logger.setLevel(Level.FINE);
+            logger.getHandlers()[0].setLevel(Level.FINE);
+            logger.fine("Debug mode: ON");
+        }
+
+        if (!kwargs.containsKey("path")) {
+            logger.severe("No `--path` argument given. One is required.");
+            System.exit(1);
+        }
+
+        Path p = Path.of(kwargs.get("path"));
         if (Files.isDirectory(p)) {
             App.processDirectory(p);
         } else if (Files.isRegularFile(p)) {
-            App.processFile(Path.of(args[0]));
+            App.processFile(p);
         } else {
             logger.severe("File path provided corresponds to neither a directory or file.");
         }
@@ -75,7 +95,7 @@ public class App {
     }
 
     private static final void processFile(Path p) {
-        logger.info("Processing total of: " + p.toString());
+        logger.fine("Processing total of: " + p.toString());
 
         // Check if directory or single file
 
@@ -107,7 +127,7 @@ public class App {
         } catch (Exception e) {
             logger.severe(e.getMessage());
         } finally {
-            logger.info("Processed: " + p.toString());
+            logger.fine("Processed: " + p.toString());
         }
     }
 
